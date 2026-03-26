@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LARK – Emergency Detection Simulation</title>
+  <meta name="description" content="ESP32 Smartwatch Emergency Detection System Simulation – Cardiac Arrest, Accident, and Physical Threat scenarios." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ─── DASHBOARD ─── -->
+  <div id="dashboard">
+    <header>
+      <div class="logo">
+        <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
+          <circle cx="18" cy="18" r="16" stroke="url(#g1)" stroke-width="2.5"/>
+          <path d="M18 8 L18 18 L24 24" stroke="url(#g1)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <defs><linearGradient id="g1" x1="0" y1="0" x2="36" y2="36"><stop stop-color="#6EE7B7"/><stop offset="1" stop-color="#3B82F6"/></linearGradient></defs>
+        </svg>
+        <h1>LARK <span>Emergency Detection</span></h1>
+      </div>
+      <div class="status-badge" id="systemStatus">
+        <span class="dot"></span> Monitoring
+      </div>
+    </header>
+
+    <main>
+      <!-- Heart Rate -->
+      <div class="control-card" id="card-hr">
+        <div class="card-header">
+          <div class="card-icon hr-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M20.42 4.58a5.4 5.4 0 0 0-7.65 0l-.77.78-.77-.78a5.4 5.4 0 0 0-7.65 0C1.46 6.7 1.33 10.28 4 13l8 8 8-8c2.67-2.72 2.54-6.3.42-8.42z"/>
+            </svg>
+          </div>
+          <div>
+            <h2>Heart Rate</h2>
+            <p class="card-subtitle">BPM</p>
+          </div>
+        </div>
+        <div class="value-display">
+          <span id="hrValue" class="big-value">72</span>
+          <span class="unit">bpm</span>
+        </div>
+        <div class="slider-wrap">
+          <input type="range" id="hrSlider" min="0" max="140" value="72" class="slider slider-hr" />
+          <div class="slider-labels"><span>0</span><span>70</span><span>140</span></div>
+        </div>
+        <div class="indicator-bar"><div class="indicator-fill hr-fill" id="hrFill"></div></div>
+      </div>
+
+      <!-- Motion -->
+      <div class="control-card" id="card-motion">
+        <div class="card-header">
+          <div class="card-icon motion-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+            </svg>
+          </div>
+          <div>
+            <h2>Motion</h2>
+            <p class="card-subtitle">Activity / Fall</p>
+          </div>
+        </div>
+        <div class="value-display">
+          <span id="motionValue" class="big-value">20</span>
+          <span class="unit">/ 100</span>
+        </div>
+        <div class="slider-wrap">
+          <input type="range" id="motionSlider" min="0" max="100" value="20" class="slider slider-motion" />
+          <div class="slider-labels"><span>0</span><span>50</span><span>100</span></div>
+        </div>
+        <div class="indicator-bar"><div class="indicator-fill motion-fill" id="motionFill"></div></div>
+      </div>
+
+      <!-- Noise -->
+      <div class="control-card" id="card-noise">
+        <div class="card-header">
+          <div class="card-icon noise-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+              <path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>
+              <path d="M19.07 4.93a10 10 0 0 1 0 14.14"/>
+            </svg>
+          </div>
+          <div>
+            <h2>Noise Level</h2>
+            <p class="card-subtitle">Decibels</p>
+          </div>
+        </div>
+        <div class="value-display">
+          <span id="noiseValue" class="big-value">40</span>
+          <span class="unit">dB</span>
+        </div>
+        <div class="slider-wrap">
+          <input type="range" id="noiseSlider" min="0" max="120" value="40" class="slider slider-noise" />
+          <div class="slider-labels"><span>0</span><span>60</span><span>120</span></div>
+        </div>
+        <div class="indicator-bar"><div class="indicator-fill noise-fill" id="noiseFill"></div></div>
+      </div>
+    </main>
+
+    <footer>
+      <p>LARK Simulation &middot; ESP32 Smartwatch Emergency Detection &middot; No real hardware</p>
+    </footer>
+  </div>
+
+  <!-- ─── ALERT OVERLAY ─── -->
+  <div id="alertOverlay" class="alert-overlay hidden">
+    <div class="alert-content">
+      <div class="alert-icon-ring" id="alertIconRing">
+        <svg id="alertIconSvg" width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+          <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+        </svg>
+      </div>
+      <h2 id="alertTitle" class="alert-title">EMERGENCY</h2>
+      <p id="alertSubtitle" class="alert-subtitle"></p>
+
+      <!-- Countdown Ring -->
+      <div class="countdown-container" id="countdownContainer">
+        <svg class="countdown-svg" viewBox="0 0 120 120">
+          <circle class="countdown-track" cx="60" cy="60" r="52"/>
+          <circle class="countdown-progress" id="countdownProgress" cx="60" cy="60" r="52"/>
+        </svg>
+        <span class="countdown-number" id="countdownNumber">15</span>
+      </div>
+
+      <button id="cancelBtn" class="cancel-btn">CANCEL</button>
+
+      <!-- Post-Countdown Content -->
+      <div id="postCountdown" class="post-countdown hidden">
+        <div id="actionList" class="action-list"></div>
+        <div id="nearbyDevices" class="nearby-devices hidden"></div>
+        <div id="videoFeed" class="video-feed hidden">
+          <p class="feed-label">📹 Live Camera Feed</p>
+          <video id="simVideo" autoplay loop muted playsinline>
+            <source src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4" />
+            Your browser does not support the video tag.
+          </video>
+        </div>
+        <button id="resetBtn" class="reset-btn">RESET SYSTEM</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── THREAT PROMPT ─── -->
+  <div id="threatPrompt" class="threat-prompt hidden">
+    <div class="threat-box" id="threatBox">
+      <div class="threat-pulse-ring"></div>
+      <div class="threat-pulse-ring threat-pulse-ring-2"></div>
+
+      <!-- Countdown Ring -->
+      <div class="threat-countdown-ring">
+        <svg class="threat-ring-svg" viewBox="0 0 120 120">
+          <circle class="threat-ring-track" cx="60" cy="60" r="52"/>
+          <circle class="threat-ring-progress" id="threatRingProgress" cx="60" cy="60" r="52"/>
+        </svg>
+        <div class="threat-ring-inner">
+          <svg class="threat-ring-icon" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#fbbf24" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+            <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+          </svg>
+          <span class="threat-ring-seconds" id="threatTimer">15</span>
+        </div>
+      </div>
+
+      <h2>Are you safe?</h2>
+      <p class="threat-desc">Abnormal heart rate detected on your LARK device.</p>
+
+      <!-- Live HR readout -->
+      <div class="threat-hr-readout">
+        <span class="threat-hr-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="#ef4444" stroke="none"><path d="M20.42 4.58a5.4 5.4 0 0 0-7.65 0l-.77.78-.77-.78a5.4 5.4 0 0 0-7.65 0C1.46 6.7 1.33 10.28 4 13l8 8 8-8c2.67-2.72 2.54-6.3.42-8.42z"/></svg>
+        </span>
+        <span class="threat-hr-value" id="threatHRValue">121</span>
+        <span class="threat-hr-unit">BPM — Elevated</span>
+      </div>
+
+      <!-- Urgency progress bar -->
+      <div class="threat-urgency-bar">
+        <div class="threat-urgency-fill" id="threatUrgencyFill"></div>
+      </div>
+      <p class="threat-urgency-label" id="threatUrgencyLabel">Awaiting your response…</p>
+
+      <div class="threat-actions">
+        <button id="safeBtn" class="safe-btn">
+          <span class="btn-icon">✓</span> I'm Safe
+          <kbd>S</kbd>
+        </button>
+        <button id="notSafeBtn" class="not-safe-btn">
+          <span class="btn-icon">!</span> Need Help
+          <kbd>H</kbd>
+        </button>
+      </div>
+
+      <p class="threat-auto-label">System will auto-escalate if no response is received</p>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
