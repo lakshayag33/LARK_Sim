@@ -141,7 +141,7 @@
   }
 
   function showPostCardiac() {
-    actionList.innerHTML = '';
+    actionList.innerHTML = '<div class="action-list-label">Actions Initiated</div>';
     addAction('📞', 'Calling emergency guardian…');
     addAction('🏥', 'Notifying nearest medical services…');
     addAction('📍', 'Sending GPS coordinates…');
@@ -178,7 +178,7 @@
   }
 
   function showPostAccident() {
-    actionList.innerHTML = '';
+    actionList.innerHTML = '<div class="action-list-label">Actions Initiated</div>';
     addAction('🚔', 'Sending GPS to police…');
     addAction('🚑', 'Dispatching ambulance…');
     addAction('📞', 'Calling emergency guardian…');
@@ -300,7 +300,7 @@
   }
 
   function showPostThreat() {
-    actionList.innerHTML = '';
+    actionList.innerHTML = '<div class="action-list-label">Actions Initiated</div>';
     addAction('🚔', 'Alerting local police…');
     addAction('📞', 'Calling emergency guardian…');
     addAction('📍', 'Sending live GPS location…');
@@ -350,7 +350,6 @@
 
   function hideCountdown() {
     countdownContainer.style.display = 'none';
-    cancelBtn.style.display = 'none';
   }
 
   function addAction(icon, text) {
@@ -400,6 +399,9 @@
     // Un-blur dashboard
     dashboard.classList.remove('blurred');
 
+    // Reset sliders to defaults
+    setSliders(72, 20, 40);
+
     // Reset status badge
     systemStatus.classList.remove('alert-active');
     systemStatus.innerHTML = '<span class="dot"></span> Monitoring';
@@ -408,6 +410,32 @@
     const vid = $('simVideo');
     if (vid) { vid.pause(); vid.currentTime = 0; }
   }
+
+  // ─── Quick Scenario Buttons ───
+  function setSliders(hr, motion, noise) {
+    hrSlider.value = hr;
+    motionSlider.value = motion;
+    noiseSlider.value = noise;
+    updateDisplays();
+  }
+
+  $('scenCardiac').addEventListener('click', () => {
+    if (activeScenario) return;
+    setSliders(0, 85, 40);
+    triggerCardiac();
+  });
+
+  $('scenAccident').addEventListener('click', () => {
+    if (activeScenario) return;
+    setSliders(130, 90, 100);
+    triggerAccident();
+  });
+
+  $('scenThreat').addEventListener('click', () => {
+    if (activeScenario) return;
+    setSliders(130, 20, 40);
+    triggerThreat();
+  });
 
   // ─── Init ───
   updateDisplays();

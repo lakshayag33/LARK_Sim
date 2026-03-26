@@ -104,6 +104,34 @@
       </div>
     </main>
 
+    <!-- ─── QUICK SCENARIOS ─── -->
+    <section class="scenario-bar">
+      <h2 class="scenario-bar-title">Quick Scenarios</h2>
+      <div class="scenario-buttons">
+        <button id="scenCardiac" class="scenario-btn cardiac-btn">
+          <span class="scenario-btn-icon">🫀</span>
+          <div class="scenario-btn-text">
+            <strong>Cardiac Arrest</strong>
+            <span>HR 0 · Motion 85</span>
+          </div>
+        </button>
+        <button id="scenAccident" class="scenario-btn accident-btn">
+          <span class="scenario-btn-icon">💥</span>
+          <div class="scenario-btn-text">
+            <strong>Accident</strong>
+            <span>HR 130 · Motion 90 · Noise 100</span>
+          </div>
+        </button>
+        <button id="scenThreat" class="scenario-btn threat-btn">
+          <span class="scenario-btn-icon">⚠️</span>
+          <div class="scenario-btn-text">
+            <strong>Physical Threat</strong>
+            <span>HR 130</span>
+          </div>
+        </button>
+      </div>
+    </section>
+
     <footer>
       <p>LARK Simulation &middot; ESP32 Smartwatch Emergency Detection &middot; No real hardware</p>
     </footer>
@@ -143,7 +171,9 @@
             Your browser does not support the video tag.
           </video>
         </div>
-        <button id="resetBtn" class="reset-btn">RESET SYSTEM</button>
+        <div class="alert-buttons">
+          <button id="resetBtn" class="reset-btn">RESET SYSTEM</button>
+        </div>
       </div>
     </div>
   </div>
